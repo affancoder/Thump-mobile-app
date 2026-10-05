@@ -59,11 +59,7 @@ export default function Login() {
             <Text style={styles.label}>Email Address</Text>
 
             <View style={styles.inputWrapper}>
-              <Ionicons
-                name="mail-outline"
-                size={23}
-                color={COLORS.primary}
-              />
+              <Ionicons name="mail-outline" size={23} color={COLORS.primary} />
 
               <TextInput
                 style={styles.input}
@@ -90,6 +86,12 @@ export default function Login() {
                 secureTextEntry={true}
               />
             </View>
+            <Pressable
+              onPress={() => router.push("/auth/forgot-password")}
+              style={styles.forgotPassword}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </Pressable>
 
             {/* Continue */}
             <Pressable
@@ -104,11 +106,7 @@ export default function Login() {
             >
               <Text style={styles.continueText}>Continue</Text>
 
-              <Ionicons
-                name="arrow-forward"
-                size={24}
-                color={COLORS.white}
-              />
+              <Ionicons name="arrow-forward" size={24} color={COLORS.white} />
             </Pressable>
 
             {/* OR */}
@@ -131,9 +129,7 @@ export default function Login() {
 
             {/* Sign Up */}
             <View style={styles.signupContainer}>
-              <Text style={styles.signupPrompt}>
-                Don't have an account?
-              </Text>
+              <Text style={styles.signupPrompt}>Don't have an account?</Text>
 
               <Pressable onPress={() => router.push("/auth/signup")}>
                 <Text style={styles.signupButton}>Sign Up</Text>
@@ -150,9 +146,7 @@ export default function Login() {
           </View>
 
           {/* Footer */}
-          <Text style={styles.footer}>
-            Thump Beyond Limits ©2026
-          </Text>
+          <Text style={styles.footer}>Thump Beyond Limits ©2026</Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -291,6 +285,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 10,
     elevation: 5,
+  },
+
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginTop: 10,
+    marginBottom: 4,
+  },
+
+  forgotPasswordText: {
+    color: COLORS.primary,
+    fontSize: 15,
+    fontWeight: "600",
   },
 
   continueText: {
