@@ -22,15 +22,15 @@ const WHITE = "#FFFFFF";
 const categories = [
   {
     title: "Charging Cables",
-    image: require("../../../assets/images/charging-cables.jpg"),
+    image: require("../../../assets/images/charging-cables.webp"),
   },
   {
     title: "Chargers & Adapters",
-    image: require("../../../assets/images/chargers-adapters.jpg"),
+    image: require("../../../assets/images/chargers-adapters.webp"),
   },
   {
     title: "Power Banks",
-    image: require("../../../assets/images/power-banks.jpg"),
+    image: require("../../../assets/images/power-banks.webp"),
   },
 ];
 
