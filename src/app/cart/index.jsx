@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 
-const productImage = require("../../../assets/images/charging-cables.jpg");
+const productImage = require("../../../assets/images/charging-cables.webp");
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";

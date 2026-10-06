@@ -56,7 +56,7 @@ const products = [
     price: 450,
     oldPrice: 599,
     discount: "",
-    image: require("../../../assets/images/charging-cables.jpg"),
+    image: require("../../../assets/images/charging-cables.webp"),
     inStock: false,
   },
 ];
