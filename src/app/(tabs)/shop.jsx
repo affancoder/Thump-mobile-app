@@ -69,6 +69,8 @@ export default function Shop() {
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
+    /* SEARCH */
+
     if (search.trim()) {
       const value = search.toLowerCase();
 
@@ -79,9 +81,13 @@ export default function Shop() {
       );
     }
 
+    /* STOCK FILTER */
+
     if (stockOnly) {
       result = result.filter((product) => product.inStock);
     }
+
+    /* SORT */
 
     if (sort === "Price: Low to High") {
       result.sort((a, b) => a.price - b.price);
@@ -102,6 +108,8 @@ export default function Shop() {
     return result;
   }, [search, sort, stockOnly]);
 
+  /* SORT */
+
   const changeSort = () => {
     const options = [
       "Newest First",
@@ -117,6 +125,12 @@ export default function Shop() {
     setSort(options[nextIndex]);
   };
 
+  /* FILTER BUTTON */
+
+  const toggleFilter = () => {
+    setStockOnly((previousValue) => !previousValue);
+  };
+
   return (
     <SafeAreaView
       style={styles.safeArea}
@@ -124,10 +138,18 @@ export default function Shop() {
     >
       <View style={styles.container}>
 
-        {/* ================= TOP ================= */}
+        {/* =====================================================
+            TOP AREA
+        ===================================================== */}
 
         <View style={styles.topArea}>
+
+          {/* TOP ROW */}
+
           <View style={styles.topRow}>
+
+            {/* BACK */}
+
             <Pressable
               style={styles.backButton}
               onPress={() => router.back()}
@@ -139,10 +161,19 @@ export default function Shop() {
               />
             </Pressable>
 
+            {/* TITLE */}
+
             <View style={styles.titleArea}>
-              <Text style={styles.title}>All Products</Text>
-              <Text style={styles.subtitle}>130 items found</Text>
+              <Text style={styles.title}>
+                All Products
+              </Text>
+
+              <Text style={styles.subtitle}>
+                130 items found
+              </Text>
             </View>
+
+            {/* CART */}
 
             <Pressable
               style={styles.cartButton}
@@ -155,15 +186,24 @@ export default function Shop() {
               />
 
               <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>1</Text>
+                <Text style={styles.cartBadgeText}>
+                  1
+                </Text>
               </View>
             </Pressable>
+
           </View>
 
-          {/* Search */}
+          {/* =====================================================
+              SEARCH
+          ===================================================== */}
 
           <View style={styles.searchRow}>
+
+            {/* SEARCH BOX */}
+
             <View style={styles.searchBox}>
+
               <Ionicons
                 name="search-outline"
                 size={22}
@@ -177,24 +217,39 @@ export default function Shop() {
                 placeholderTextColor={MUTED}
                 style={styles.searchInput}
               />
+
             </View>
 
-            <Pressable style={styles.filterIconButton}>
+            {/* FILTER ICON */}
+
+            <Pressable
+              style={[
+                styles.filterIconButton,
+                stockOnly && styles.filterIconButtonActive,
+              ]}
+              onPress={toggleFilter}
+            >
               <Ionicons
                 name="options-outline"
                 size={25}
                 color={WHITE}
               />
             </Pressable>
+
           </View>
 
-          {/* Filters */}
+          {/* =====================================================
+              FILTER CHIPS
+          ===================================================== */}
 
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.filterRow}
           >
+
+            {/* SORT */}
+
             <Pressable
               style={styles.sortButton}
               onPress={changeSort}
@@ -210,12 +265,14 @@ export default function Shop() {
               />
             </Pressable>
 
+            {/* FILTER */}
+
             <Pressable
               style={[
                 styles.filterButton,
                 stockOnly && styles.activeFilter,
               ]}
-              onPress={() => setStockOnly(!stockOnly)}
+              onPress={toggleFilter}
             >
               <Ionicons
                 name="funnel-outline"
@@ -232,6 +289,8 @@ export default function Shop() {
                 Filter
               </Text>
             </Pressable>
+
+            {/* IN STOCK */}
 
             <Pressable
               style={[
@@ -250,35 +309,50 @@ export default function Shop() {
               </Text>
             </Pressable>
 
+            {/* ON SALE */}
+
             <View style={styles.extraFilter}>
               <Text style={styles.extraFilterText}>
                 On Sale
               </Text>
             </View>
+
           </ScrollView>
+
         </View>
 
-        {/* ================= PRODUCTS ================= */}
+        {/* =====================================================
+            PRODUCTS
+        ===================================================== */}
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.productContainer}
         >
+
           <View style={styles.grid}>
+
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
               />
             ))}
+
           </View>
+
         </ScrollView>
 
-        {/* ================= CART SUMMARY ================= */}
+        {/* =====================================================
+            CART SUMMARY
+        ===================================================== */}
 
         <View style={styles.cartSummary}>
+
           <View style={styles.cartSummaryLeft}>
+
             <View style={styles.summaryCartIcon}>
+
               <Ionicons
                 name="bag-handle-outline"
                 size={24}
@@ -290,9 +364,11 @@ export default function Shop() {
                   1
                 </Text>
               </View>
+
             </View>
 
             <View>
+
               <Text style={styles.totalLabel}>
                 Total Amount
               </Text>
@@ -300,7 +376,9 @@ export default function Shop() {
               <Text style={styles.totalAmount}>
                 ₹267
               </Text>
+
             </View>
+
           </View>
 
           <Pressable
@@ -317,6 +395,7 @@ export default function Shop() {
               color={WHITE}
             />
           </Pressable>
+
         </View>
 
       </View>
@@ -336,7 +415,8 @@ function ProductCard({ product }) {
         // Product details route will be connected later.
       }}
     >
-      {/* Discount */}
+
+      {/* DISCOUNT */}
 
       {product.discount ? (
         <View style={styles.discountBadge}>
@@ -346,7 +426,7 @@ function ProductCard({ product }) {
         </View>
       ) : null}
 
-      {/* Wishlist */}
+      {/* WISHLIST */}
 
       <Pressable
         style={styles.wishlistButton}
@@ -359,33 +439,38 @@ function ProductCard({ product }) {
         />
       </Pressable>
 
-      {/* Image */}
+      {/* IMAGE */}
 
       <View style={styles.imageContainer}>
+
         <Image
           source={product.image}
           style={styles.productImage}
           resizeMode="cover"
         />
+
       </View>
 
-      {/* Dots */}
+      {/* DOTS */}
 
       <View style={styles.dots}>
+
         <View style={styles.activeDot} />
+
         <View style={styles.dot} />
         <View style={styles.dot} />
         <View style={styles.dot} />
         <View style={styles.dot} />
+
       </View>
 
-      {/* Brand */}
+      {/* BRAND */}
 
       <Text style={styles.brand}>
         {product.brand}
       </Text>
 
-      {/* Product Name */}
+      {/* PRODUCT NAME */}
 
       <Text
         style={styles.productName}
@@ -394,9 +479,10 @@ function ProductCard({ product }) {
         {product.name}
       </Text>
 
-      {/* Price */}
+      {/* PRICE */}
 
       <View style={styles.priceRow}>
+
         <Text style={styles.price}>
           ₹{product.price}
         </Text>
@@ -404,12 +490,15 @@ function ProductCard({ product }) {
         <Text style={styles.oldPrice}>
           ₹{product.oldPrice}
         </Text>
+
       </View>
 
-      {/* Add / Out of Stock */}
+      {/* ADD / OUT OF STOCK */}
 
       {product.inStock ? (
+
         <Pressable style={styles.addButton}>
+
           <Ionicons
             name="cart-outline"
             size={17}
@@ -419,14 +508,21 @@ function ProductCard({ product }) {
           <Text style={styles.addText}>
             Add
           </Text>
+
         </Pressable>
+
       ) : (
+
         <View style={styles.outOfStock}>
+
           <Text style={styles.outOfStockText}>
             Out of Stock
           </Text>
+
         </View>
+
       )}
+
     </Pressable>
   );
 }
@@ -436,6 +532,11 @@ function ProductCard({ product }) {
 ===================================================== */
 
 const styles = StyleSheet.create({
+
+  /* =====================================================
+     MAIN
+  ===================================================== */
+
   safeArea: {
     flex: 1,
     backgroundColor: BG,
@@ -446,7 +547,9 @@ const styles = StyleSheet.create({
     backgroundColor: BG,
   },
 
-  /* TOP */
+  /* =====================================================
+     TOP
+  ===================================================== */
 
   topArea: {
     paddingHorizontal: 20,
@@ -523,7 +626,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  /* SEARCH */
+  /* =====================================================
+     SEARCH
+  ===================================================== */
 
   searchRow: {
     flexDirection: "row",
@@ -562,7 +667,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  /* FILTERS */
+  /* NEW: ACTIVE FILTER ICON */
+
+  filterIconButtonActive: {
+    backgroundColor: "#078F7D",
+  },
+
+  /* =====================================================
+     FILTERS
+  ===================================================== */
 
   filterRow: {
     paddingVertical: 13,
@@ -655,7 +768,9 @@ const styles = StyleSheet.create({
     color: DARK,
   },
 
-  /* PRODUCTS */
+  /* =====================================================
+     PRODUCTS
+  ===================================================== */
 
   productContainer: {
     paddingHorizontal: 10,
@@ -681,7 +796,7 @@ const styles = StyleSheet.create({
     elevation: 3,
 
     position: "relative",
-        marginBottom: 10,
+    marginBottom: 10,
   },
 
   discountBadge: {
@@ -827,7 +942,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 
-  /* CART SUMMARY */
+  /* =====================================================
+     CART SUMMARY
+  ===================================================== */
 
   cartSummary: {
     position: "absolute",
@@ -907,4 +1024,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
   },
+
 });
