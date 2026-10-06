@@ -26,7 +26,7 @@ const products = [
     price: 380,
     oldPrice: 456,
     discount: "17% OFF",
-    image: require("../../../assets/images/charging-cables.jpg"),
+    image: require("../../../assets/images/charging-cables.webp"),
     inStock: true,
   },
   {
@@ -36,7 +36,7 @@ const products = [
     price: 340,
     oldPrice: 408,
     discount: "17% OFF",
-    image: require("../../../assets/images/chargers-adapters.jpg"),
+    image: require("../../../assets/images/chargers-adapters.webp"),
     inStock: true,
   },
   {
@@ -46,7 +46,7 @@ const products = [
     price: 267,
     oldPrice: 320.4,
     discount: "17% OFF",
-    image: require("../../../assets/images/charging-cables.jpg"),
+    image: require("../../../assets/images/charging-cables.webp"),
     inStock: true,
   },
   {
