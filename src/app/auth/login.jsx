@@ -101,7 +101,7 @@ export default function Login() {
               ]}
               onPress={() => {
                 // Frontend only for now
-                router.push("/home");
+                router.push("/(tabs)/home");
               }}
             >
               <Text style={styles.continueText}>Continue</Text>

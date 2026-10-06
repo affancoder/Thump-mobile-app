@@ -123,7 +123,7 @@ export default function Signup() {
               ]}
               onPress={() => {
                 // Later this will navigate to Complete Profile
-                router.push("/auth/complete-profile");
+                router.push("/(tabs)/home");
               }}
             >
               <Text style={styles.createButtonText}>Create Account</Text>
