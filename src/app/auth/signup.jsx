@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,8 +11,11 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+
+import { updateProfile } from "../../context/profileStore";
 
 const COLORS = {
   primary: "#08AA92",
@@ -22,6 +27,26 @@ const COLORS = {
 };
 
 export default function Signup() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleCreateAccount = () => {
+    /*
+      Save the mobile number into the shared
+      frontend profile store.
+
+      Backend/API integration will be added later.
+    */
+    updateProfile({
+      contactPerson: fullName.trim(),
+      mobile: mobile.trim(),
+    });
+
+    router.push("/(tabs)/home");
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -34,27 +59,44 @@ export default function Signup() {
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
+
           <View style={styles.header}>
-            <Pressable style={styles.backButton} onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={25} color={COLORS.text} />
+            <Pressable
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={25}
+                color={COLORS.text}
+              />
             </Pressable>
 
             <View style={styles.logoWrapper}>
               <Text style={styles.logo}>THUMP</Text>
-              <Text style={styles.logoTagline}>Beyond Limits</Text>
+
+              <Text style={styles.logoTagline}>
+                Beyond Limits
+              </Text>
             </View>
           </View>
 
           {/* Signup Card */}
+
           <View style={styles.card}>
-            <Text style={styles.heading}>Create Account</Text>
+            <Text style={styles.heading}>
+              Create Account
+            </Text>
 
             <Text style={styles.subHeading}>
               Create your account to get started
             </Text>
 
             {/* Name */}
-            <Text style={styles.label}>Full Name</Text>
+
+            <Text style={styles.label}>
+              Full Name
+            </Text>
 
             <View style={styles.inputWrapper}>
               <Ionicons
@@ -67,14 +109,23 @@ export default function Signup() {
                 style={styles.input}
                 placeholder="Enter your full name"
                 placeholderTextColor="#87949A"
+                value={fullName}
+                onChangeText={setFullName}
               />
             </View>
 
             {/* Email */}
-            <Text style={styles.label}>Email Address</Text>
+
+            <Text style={styles.label}>
+              Email Address
+            </Text>
 
             <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={22} color={COLORS.primary} />
+              <Ionicons
+                name="mail-outline"
+                size={22}
+                color={COLORS.primary}
+              />
 
               <TextInput
                 style={styles.input}
@@ -82,24 +133,40 @@ export default function Signup() {
                 placeholderTextColor="#87949A"
                 keyboardType="email-address"
                 autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
 
             {/* Phone */}
-            <Text style={styles.label}>Mobile Number</Text>
+
+            <Text style={styles.label}>
+              Mobile Number
+            </Text>
 
             <View style={styles.inputWrapper}>
-              <Ionicons name="call-outline" size={22} color={COLORS.primary} />
+              <Ionicons
+                name="call-outline"
+                size={22}
+                color={COLORS.primary}
+              />
 
               <TextInput
                 style={styles.input}
                 placeholder="Enter mobile number"
                 placeholderTextColor="#87949A"
                 keyboardType="phone-pad"
+                value={mobile}
+                onChangeText={setMobile}
               />
             </View>
 
-            <Text style={styles.label}>Password</Text>
+            {/* Password */}
+
+            <Text style={styles.label}>
+              Password
+            </Text>
+
             <View style={styles.inputWrapper}>
               <Ionicons
                 name="lock-closed-outline"
@@ -112,36 +179,53 @@ export default function Signup() {
                 placeholder="Enter your password"
                 placeholderTextColor="#87949A"
                 secureTextEntry={true}
+                value={password}
+                onChangeText={setPassword}
               />
             </View>
 
             {/* Create Account */}
+
             <Pressable
               style={({ pressed }) => [
                 styles.createButton,
                 pressed && styles.pressed,
               ]}
-              onPress={() => {
-                // Later this will navigate to Complete Profile
-                router.push("/(tabs)/home");
-              }}
+              onPress={handleCreateAccount}
             >
-              <Text style={styles.createButtonText}>Create Account</Text>
+              <Text style={styles.createButtonText}>
+                Create Account
+              </Text>
 
-              <Ionicons name="arrow-forward" size={23} color={COLORS.white} />
+              <Ionicons
+                name="arrow-forward"
+                size={23}
+                color={COLORS.white}
+              />
             </Pressable>
 
             {/* Existing Account */}
-            <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Already have an account?</Text>
 
-              <Pressable onPress={() => router.replace("/auth/login")}>
-                <Text style={styles.loginButton}>Sign In</Text>
+            <View style={styles.loginContainer}>
+              <Text style={styles.loginText}>
+                Already have an account?
+              </Text>
+
+              <Pressable
+                onPress={() =>
+                  router.replace("/auth/login")
+                }
+              >
+                <Text style={styles.loginButton}>
+                  Sign In
+                </Text>
               </Pressable>
             </View>
           </View>
 
-          <Text style={styles.footer}>Thump Beyond Limits ©2026</Text>
+          <Text style={styles.footer}>
+            Thump Beyond Limits ©2026
+          </Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

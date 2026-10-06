@@ -15,6 +15,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
+import {
+  getProfile,
+  updateProfile,
+} from "../../context/profileStore";
+
 const TEAL = "#0BAF9A";
 const BG = "#F3F5F8";
 const TEXT = "#263238";
@@ -26,20 +31,77 @@ const BUTTON = "#8EA0AA";
 export default function CompleteProfile() {
   const router = useRouter();
 
-  // Empty fields — no pre-filled data
-  const [businessName, setBusinessName] = useState("");
-  const [contactPerson, setContactPerson] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [gstNumber, setGstNumber] = useState("");
+  /*
+   * Load previously saved frontend profile data.
+   *
+   * If nothing has been saved yet, all values are empty.
+   */
+  const savedProfile = getProfile();
+
+  // ================= CONTACT DETAILS =================
+
+  const [businessName, setBusinessName] = useState(
+    savedProfile.businessName || ""
+  );
+
+  const [contactPerson, setContactPerson] = useState(
+    savedProfile.contactPerson || ""
+  );
+
+  // ================= DELIVERY ADDRESS =================
+
+  const [address1, setAddress1] = useState(
+    savedProfile.address1 || ""
+  );
+
+  const [address2, setAddress2] = useState(
+    savedProfile.address2 || ""
+  );
+
+  const [city, setCity] = useState(
+    savedProfile.city || ""
+  );
+
+  const [state, setState] = useState(
+    savedProfile.state || ""
+  );
+
+  const [pincode, setPincode] = useState(
+    savedProfile.pincode || ""
+  );
+
+  // ================= GST =================
+
+  const [gstNumber, setGstNumber] = useState(
+    savedProfile.gstNumber || ""
+  );
+
+  /*
+   * Mobile number is currently read-only / verified.
+   *
+   * It can later come from login/signup/backend.
+   */
+  const mobileNumber = savedProfile.mobile || "";
+
+  // ================= SAVE =================
 
   const handleSave = () => {
-    // Backend/API integration will be added later.
+    updateProfile({
+      businessName,
+      contactPerson,
+      mobile: mobileNumber,
+      address1,
+      address2,
+      city,
+      state,
+      pincode,
+      gstNumber,
+    });
+
     router.back();
   };
+
+  // ================= DISCARD =================
 
   const handleDiscard = () => {
     router.back();
@@ -59,7 +121,11 @@ export default function CompleteProfile() {
             onPress={() => router.back()}
             activeOpacity={0.8}
           >
-            <Ionicons name="arrow-back" size={23} color={TEXT} />
+            <Ionicons
+              name="arrow-back"
+              size={23}
+              color={TEXT}
+            />
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>
@@ -92,6 +158,8 @@ export default function CompleteProfile() {
               title="Contact Details"
             />
 
+            {/* Business Name */}
+
             <FieldLabel
               text="Business Name"
               required
@@ -104,6 +172,8 @@ export default function CompleteProfile() {
               placeholder="Enter business name"
               placeholderTextColor="#98A6AE"
             />
+
+            {/* Contact Person */}
 
             <FieldLabel
               text="Contact Person Name"
@@ -118,11 +188,18 @@ export default function CompleteProfile() {
               placeholderTextColor="#98A6AE"
             />
 
+            {/* Mobile Number */}
+
             <FieldLabel text="Mobile Number" />
 
             <View style={styles.mobileBox}>
-              <Text style={styles.mobilePlaceholder}>
-                Mobile number
+              <Text
+                style={[
+                  styles.mobilePlaceholder,
+                  mobileNumber && styles.mobileValue,
+                ]}
+              >
+                {mobileNumber || "Mobile number"}
               </Text>
 
               <View style={styles.verifiedBadge}>
@@ -147,6 +224,8 @@ export default function CompleteProfile() {
               title="Delivery Address"
             />
 
+            {/* Address Line 1 */}
+
             <FieldLabel
               text="Address Line 1"
               required
@@ -160,6 +239,8 @@ export default function CompleteProfile() {
               placeholderTextColor="#98A6AE"
             />
 
+            {/* Address Line 2 */}
+
             <View style={styles.labelRow}>
               <Text style={styles.label}>
                 Address Line 2
@@ -171,14 +252,21 @@ export default function CompleteProfile() {
             </View>
 
             <TextInput
-              style={[styles.input, styles.optionalInput]}
+              style={[
+                styles.input,
+                styles.optionalInput,
+              ]}
               value={address2}
               onChangeText={setAddress2}
               placeholder="Street, Area, Landmark"
               placeholderTextColor="#98A6AE"
             />
 
+            {/* City + State */}
+
             <View style={styles.row}>
+              {/* City */}
+
               <View style={styles.halfField}>
                 <FieldLabel
                   text="City"
@@ -194,6 +282,8 @@ export default function CompleteProfile() {
                 />
               </View>
 
+              {/* State */}
+
               <View style={styles.halfField}>
                 <FieldLabel
                   text="State"
@@ -204,8 +294,13 @@ export default function CompleteProfile() {
                   style={styles.dropdown}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.dropdownPlaceholder}>
-                    Select state
+                  <Text
+                    style={[
+                      styles.dropdownPlaceholder,
+                      state && styles.dropdownValue,
+                    ]}
+                  >
+                    {state || "Select state"}
                   </Text>
 
                   <Ionicons
@@ -216,6 +311,8 @@ export default function CompleteProfile() {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Pincode */}
 
             <View style={styles.labelRow}>
               <Text style={styles.label}>
@@ -317,9 +414,9 @@ export default function CompleteProfile() {
   );
 }
 
-/* =========================
+/* =====================================================
    SECTION TITLE
-========================= */
+===================================================== */
 
 function SectionTitle({ icon, title }) {
   return (
@@ -343,9 +440,9 @@ function SectionTitle({ icon, title }) {
   );
 }
 
-/* =========================
+/* =====================================================
    FIELD LABEL
-========================= */
+===================================================== */
 
 function FieldLabel({ text, required }) {
   return (
@@ -361,9 +458,9 @@ function FieldLabel({ text, required }) {
   );
 }
 
-/* =========================
+/* =====================================================
    STYLES
-========================= */
+===================================================== */
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -379,6 +476,7 @@ const styles = StyleSheet.create({
 
   header: {
     height: 70,
+
     paddingHorizontal: 16,
 
     flexDirection: "row",
@@ -432,6 +530,7 @@ const styles = StyleSheet.create({
 
   saveTopText: {
     color: WHITE,
+
     fontSize: 14,
     fontWeight: "700",
   },
@@ -576,7 +675,12 @@ const styles = StyleSheet.create({
 
   mobilePlaceholder: {
     color: "#98A6AE",
+
     fontSize: 15,
+  },
+
+  mobileValue: {
+    color: TEXT,
   },
 
   verifiedBadge: {
@@ -605,6 +709,7 @@ const styles = StyleSheet.create({
 
   row: {
     flexDirection: "row",
+
     justifyContent: "space-between",
 
     gap: 11,
@@ -635,7 +740,12 @@ const styles = StyleSheet.create({
 
   dropdownPlaceholder: {
     color: "#98A6AE",
+
     fontSize: 14,
+  },
+
+  dropdownValue: {
+    color: TEXT,
   },
 
   /* ================= GST ================= */
@@ -657,6 +767,7 @@ const styles = StyleSheet.create({
 
   optionalBadgeText: {
     color: "#819099",
+
     fontSize: 12,
   },
 
