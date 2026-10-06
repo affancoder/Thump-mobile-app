@@ -171,15 +171,15 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 
-  /* ================= HEADER ================= */
+  /* ==== HEADER == */
 
   header: {
     backgroundColor: PRIMARY,
-    paddingHorizontal: 22,
-    paddingTop: 10,
-    paddingBottom: 30,
-    borderBottomLeftRadius: 38,
-    borderBottomRightRadius: 38,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
 
   headerTop: {
@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
     width: 57,
     height: 57,
     borderRadius: 29,
-    backgroundColor: "#8be855",
-    borderWidth: 2,
+    backgroundColor: "#6bb440",
+    borderWidth: 1.5,
     borderColor: WHITE,
     alignItems: "center",
     justifyContent: "center",
@@ -244,10 +244,10 @@ const styles = StyleSheet.create({
   /* ================= SEARCH ================= */
 
   searchContainer: {
-    height: 59,
+    height: 46,
     backgroundColor: WHITE,
     borderRadius: 15,
-    marginTop: 22,
+    marginTop: 14,
     paddingHorizontal: 17,
     flexDirection: "row",
     alignItems: "center",
