@@ -32,6 +32,34 @@ const categories = [
     title: "Power Banks",
     image: require("../../../assets/images/power-banks.webp"),
   },
+  {
+    title: "Headphones & Earphones",
+    image: require("../../../assets/images/headphones-earphones.webp"),
+  },
+  {
+    title: "Cases & Covers",
+    image: require("../../../assets/images/cases-covers.webp"),
+  },
+  {
+    title: "Mounts & Stands",
+    image: require("../../../assets/images/mounts-stands.webp"),
+  },
+  {
+    title: "Smartwatch Accessories",
+    image: require("../../../assets/images/smartwatch-accessories.webp"),
+  },
+  {
+    title: "Speakers",
+    image: require("../../../assets/images/speakers.webp"),
+  },
+  {
+    title: "Other Accessories",
+    image: require("../../../assets/images/other-accessories.webp"),
+  },
+  {
+    title: "Mobiles",
+    image: require("../../../assets/images/mobiles.webp"),
+  },
 ];
 
 export default function Home() {
