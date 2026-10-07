@@ -2,7 +2,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,6 +10,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useState } from "react";
+
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const COLORS = {
   primary: "#08AA92",
@@ -25,8 +27,10 @@ const COLORS = {
 };
 
 export default function Login() {
+  const [focused, setFocused] = useState(false);
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -58,8 +62,18 @@ export default function Login() {
 
             <Text style={styles.label}>Email Address</Text>
 
-            <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={23} color={COLORS.primary} />
+            {/* Email Input */}
+            <View
+              style={[
+                styles.inputWrapper,
+                focused && styles.inputWrapperActive,
+              ]}
+            >
+              <Ionicons
+                name="mail-outline"
+                size={23}
+                color={COLORS.primary}
+              />
 
               <TextInput
                 style={styles.input}
@@ -68,29 +82,18 @@ export default function Login() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
               />
             </View>
 
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.inputWrapper}>
-              <Ionicons
-                name="lock-closed-outline"
-                size={23}
-                color={COLORS.primary}
-              />
-
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#87949A"
-                secureTextEntry={true}
-              />
-            </View>
             <Pressable
               onPress={() => router.push("/auth/forgot-password")}
               style={styles.forgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>
+                Forgot Password?
+              </Text>
             </Pressable>
 
             {/* Continue */}
@@ -106,13 +109,19 @@ export default function Login() {
             >
               <Text style={styles.continueText}>Continue</Text>
 
-              <Ionicons name="arrow-forward" size={24} color={COLORS.white} />
+              <Ionicons
+                name="arrow-forward"
+                size={24}
+                color={COLORS.white}
+              />
             </Pressable>
 
             {/* OR */}
             <View style={styles.orContainer}>
               <View style={styles.divider} />
+
               <Text style={styles.orText}>or</Text>
+
               <View style={styles.divider} />
             </View>
 
@@ -124,17 +133,11 @@ export default function Login() {
               ]}
             >
               <Text style={styles.googleIcon}>G</Text>
-              <Text style={styles.googleText}>Continue with Google</Text>
+
+              <Text style={styles.googleText}>
+                Continue with Google
+              </Text>
             </Pressable>
-
-            {/* Sign Up */}
-            <View style={styles.signupContainer}>
-              <Text style={styles.signupPrompt}>Don't have an account?</Text>
-
-              <Pressable onPress={() => router.push("/auth/signup")}>
-                <Text style={styles.signupButton}>Sign Up</Text>
-              </Pressable>
-            </View>
 
             {/* Terms */}
             <Text style={styles.terms}>
@@ -142,11 +145,12 @@ export default function Login() {
               <Text style={styles.termsLink}>Terms</Text>
               {" & "}
               <Text style={styles.termsLink}>Privacy Policy</Text>
+
+              <Text style={styles.footer}>
+                Thump Beyond Limits ©2026
+              </Text>
             </Text>
           </View>
-
-          {/* Footer */}
-          <Text style={styles.footer}>Thump Beyond Limits ©2026</Text>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -156,7 +160,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.text,
   },
 
   flex: {
@@ -260,6 +264,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
 
+  inputWrapperActive: {
+    backgroundColor: "#E0F5F1",
+    borderColor: COLORS.primaryDark,
+  },
+
   input: {
     flex: 1,
     marginLeft: 5,
@@ -267,10 +276,21 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginTop: 10,
+  },
+
+  forgotPasswordText: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
   continueButton: {
     height: 56,
     borderRadius: 14,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.secondaryText,
     marginTop: 24,
     flexDirection: "row",
     justifyContent: "center",
@@ -285,18 +305,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 10,
     elevation: 5,
-  },
-
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginTop: 10,
-    marginBottom: 4,
-  },
-
-  forgotPasswordText: {
-    color: COLORS.primary,
-    fontSize: 15,
-    fontWeight: "600",
   },
 
   continueText: {
@@ -355,26 +363,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.text,
   },
-
-  signupContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 28,
-  },
-
-  signupPrompt: {
-    fontSize: 17,
-    color: COLORS.secondaryText,
-  },
-
-  signupButton: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: COLORS.primary,
-    marginLeft: 6,
-  },
-
   terms: {
     textAlign: "center",
     fontSize: 12,
