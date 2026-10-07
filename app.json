@@ -23,7 +23,8 @@
           "image": "./assets/images/favicon.png",
           "imageWidth": 86
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
