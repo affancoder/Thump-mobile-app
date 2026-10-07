@@ -6,16 +6,14 @@ import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
-import {
-  getProfile,
-  subscribeToProfile,
-} from "../../context/profileStore";
+import { getProfile, subscribeToProfile } from "../../context/profileStore";
 
 const PRIMARY = "#08AA92";
 const DARK = "#172126";
 const MUTED = "#829098";
 const BACKGROUND = "#F3F4F8";
 const WHITE = "#FFFFFF";
+const footer = "#829098";
 
 export default function Account() {
   const router = useRouter();
@@ -45,11 +43,11 @@ export default function Account() {
   ];
 
   const filledFields = requiredFields.filter(
-    (field) => field && field.trim() !== ""
+    (field) => field && field.trim() !== "",
   ).length;
 
   const profilePercentage = Math.round(
-    (filledFields / requiredFields.length) * 100
+    (filledFields / requiredFields.length) * 100,
   );
 
   const profileComplete = profilePercentage === 100;
@@ -95,20 +93,12 @@ export default function Account() {
                 <Text style={styles.profileName}>KJFND LONJL</Text>
 
                 <View style={styles.companyRow}>
-                  <Ionicons
-                    name="business-outline"
-                    size={16}
-                    color={PRIMARY}
-                  />
+                  <Ionicons name="business-outline" size={16} color={PRIMARY} />
 
-                  <Text style={styles.companyName}>
-                    XARHYH Enterprises
-                  </Text>
+                  <Text style={styles.companyName}>XARHYH Enterprises</Text>
                 </View>
 
-                <Text style={styles.phoneNumber}>
-                  +96 0101010101
-                </Text>
+                <Text style={styles.phoneNumber}>+96 0101010101</Text>
 
                 {/* ================= PROFILE COMPLETION ================= */}
 
@@ -125,9 +115,7 @@ export default function Account() {
                         : "time-outline"
                     }
                     size={14}
-                    color={
-                      profileComplete ? PRIMARY : "#D88A1A"
-                    }
+                    color={profileComplete ? PRIMARY : "#D88A1A"}
                   />
 
                   <Text
@@ -163,9 +151,7 @@ export default function Account() {
 
                   <Text style={styles.statTitle}>Total Orders</Text>
 
-                  <Text style={styles.statSubtitle}>
-                    View your orders
-                  </Text>
+                  <Text style={styles.statSubtitle}>View your orders</Text>
                 </View>
               </View>
 
@@ -189,9 +175,7 @@ export default function Account() {
 
                   <Text style={styles.statTitle}>GST Status</Text>
 
-                  <Text style={styles.statSubtitle}>
-                    Not Registered
-                  </Text>
+                  <Text style={styles.statSubtitle}>Not Registered</Text>
                 </View>
               </View>
             </View>
@@ -202,21 +186,14 @@ export default function Account() {
           <View style={styles.reviewCard}>
             <View style={styles.reviewTop}>
               <View style={styles.reviewIcon}>
-                <Ionicons
-                  name="time-outline"
-                  size={24}
-                  color="#FFFFFF"
-                />
+                <Ionicons name="time-outline" size={24} color="#FFFFFF" />
               </View>
 
               <View style={styles.reviewTextContainer}>
-                <Text style={styles.reviewTitle}>
-                  Manual Review
-                </Text>
+                <Text style={styles.reviewTitle}>Manual Review</Text>
 
                 <Text style={styles.reviewDescription}>
-                  No GST provided. Admin will review your profile
-                  manually.
+                  No GST provided. Admin will review your profile manually.
                 </Text>
               </View>
             </View>
@@ -224,11 +201,7 @@ export default function Account() {
             <View style={styles.reviewDivider} />
 
             <View style={styles.notificationRow}>
-              <Ionicons
-                name="time-outline"
-                size={15}
-                color="#C18A25"
-              />
+              <Ionicons name="time-outline" size={15} color="#C18A25" />
 
               <Text style={styles.notificationText}>
                 You'll be notified once reviewed
@@ -246,14 +219,8 @@ export default function Account() {
               iconType="dashboard"
               title="My Dashboard"
               subtitle="Orders, Delivery & Payments overview"
-              arrow={
-                dashboardOpen
-                  ? "chevron-up"
-                  : "chevron-down"
-              }
-              onPress={() =>
-                setDashboardOpen(!dashboardOpen)
-              }
+              arrow={dashboardOpen ? "chevron-up" : "chevron-down"}
+              onPress={() => setDashboardOpen(!dashboardOpen)}
             />
 
             {/* Dashboard Sub Menu */}
@@ -291,9 +258,7 @@ export default function Account() {
               title="My Credit"
               subtitle="View credit balance & transaction ledger"
               arrow="chevron-forward"
-              onPress={() =>
-                router.push("/account/credit")
-              }
+              onPress={() => router.push("/account/credit")}
             />
 
             {/* Edit Profile */}
@@ -304,9 +269,7 @@ export default function Account() {
               title="Edit Profile"
               subtitle="Update your personal information"
               arrow="chevron-forward"
-              onPress={() =>
-                router.push("/auth/complete-profile")
-              }
+              onPress={() => router.push("/auth/complete-profile")}
             />
 
             {/* My Orders */}
@@ -317,9 +280,7 @@ export default function Account() {
               title="My Orders"
               subtitle="Track and view your orders"
               arrow="chevron-forward"
-              onPress={() =>
-                router.push("/account/orders")
-              }
+              onPress={() => router.push("/account/orders")}
             />
 
             {/* Complaints */}
@@ -327,11 +288,10 @@ export default function Account() {
             <MenuRow
               icon="alert-circle-outline"
               title="Complaints"
+              iconType="complaints"
               subtitle="Raise and track your complaints"
               arrow="chevron-forward"
-              onPress={() =>
-                router.push("/account/complaints")
-              }
+              onPress={() => router.push("/account/complaints")}
             />
 
             {/* Privacy Policy */}
@@ -342,14 +302,31 @@ export default function Account() {
               title="Privacy Policy"
               subtitle="Read our privacy policy"
               arrow="chevron-forward"
-              onPress={() =>
-                router.push("/account/privacy-policy")
-              }
+              onPress={() => router.push("/account/privacy-policy")}
               last
             />
           </View>
 
           <View style={styles.bottomSpace} />
+
+          <Pressable
+            style={({ pressed }) => [
+              styles.logoutButton,
+              pressed && styles.logoutPressed,
+            ]}
+            onPress={() => {
+              router.replace("/auth/login");
+            }}
+          >
+            <Ionicons name="log-out-outline" size={25} color="#D93636" />
+
+            <Text style={styles.logoutText}>Logout</Text>
+          </Pressable>
+          {/* FOOTER */}
+
+          <View>
+            <Text style={styles.footer}>Thump Beyond Limits ©2026</Text>
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -360,41 +337,27 @@ export default function Account() {
    MAIN MENU ROW
 ===================================================== */
 
-function MenuRow({
-  icon,
-  iconType,
-  title,
-  subtitle,
-  arrow,
-  onPress,
-  last,
-}) {
+function MenuRow({ icon, iconType, title, subtitle, arrow, onPress, last }) {
   return (
     <Pressable
-      style={[
-        styles.menuRow,
-        last && styles.lastMenuRow,
-      ]}
+      style={[styles.menuRow, last && styles.lastMenuRow]}
       onPress={onPress}
     >
       <View
         style={[
           styles.menuIcon,
 
-          iconType === "dashboard" &&
-            styles.iconDashboard,
+          iconType === "dashboard" && styles.iconDashboard,
 
-          iconType === "credit" &&
-            styles.iconCredit,
+          iconType === "credit" && styles.iconCredit,
 
-          iconType === "profile" &&
-            styles.iconProfile,
+          iconType === "profile" && styles.iconProfile,
 
-          iconType === "orders" &&
-            styles.iconOrders,
+          iconType === "orders" && styles.iconOrders,
 
-          iconType === "privacy" &&
-            styles.iconPrivacy,
+          iconType === "complaints" && styles.iconComplaints,
+
+          iconType === "privacy" && styles.iconPrivacy,
         ]}
       >
         <Ionicons
@@ -409,31 +372,24 @@ function MenuRow({
                   ? PRIMARY
                   : iconType === "orders"
                     ? "#36C98B"
-                    : iconType === "privacy"
-                      ? "#6574D9"
-                      : PRIMARY
+                    : iconType === "complaints"
+                      ? "#D88A1A"
+                      : iconType === "privacy"
+                        ? "#6574D9"
+                        : PRIMARY
           }
         />
       </View>
 
       <View style={styles.menuTextContainer}>
-        <Text style={styles.menuTitle}>
-          {title}
-        </Text>
+        <Text style={styles.menuTitle}>{title}</Text>
 
-        <Text
-          style={styles.menuSubtitle}
-          numberOfLines={2}
-        >
+        <Text style={styles.menuSubtitle} numberOfLines={2}>
           {subtitle}
         </Text>
       </View>
 
-      <Ionicons
-        name={arrow}
-        size={23}
-        color="#829098"
-      />
+      <Ionicons name={arrow} size={23} color="#829098" />
     </Pressable>
   );
 }
@@ -442,12 +398,7 @@ function MenuRow({
    SUB MENU ROW
 ===================================================== */
 
-function SubMenuRow({
-  icon,
-  iconType,
-  title,
-  subtitle,
-}) {
+function SubMenuRow({ icon, iconType, title, subtitle }) {
   let iconColor = PRIMARY;
   let iconBackground = "#E8F8F4";
 
@@ -471,28 +422,16 @@ function SubMenuRow({
           },
         ]}
       >
-        <Ionicons
-          name={icon}
-          size={22}
-          color={iconColor}
-        />
+        <Ionicons name={icon} size={22} color={iconColor} />
       </View>
 
       <View style={styles.subMenuText}>
-        <Text style={styles.subMenuTitle}>
-          {title}
-        </Text>
+        <Text style={styles.subMenuTitle}>{title}</Text>
 
-        <Text style={styles.subMenuSubtitle}>
-          {subtitle}
-        </Text>
+        <Text style={styles.subMenuSubtitle}>{subtitle}</Text>
       </View>
 
-      <Ionicons
-        name="chevron-down"
-        size={20}
-        color="#829098"
-      />
+      <Ionicons name="chevron-down" size={20} color="#829098" />
     </View>
   );
 }
@@ -875,7 +814,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
 
-    borderRadius: 15,
+    borderRadius: 21,
 
     alignItems: "center",
     justifyContent: "center",
@@ -895,6 +834,10 @@ const styles = StyleSheet.create({
 
   iconOrders: {
     backgroundColor: "#E7F8F1",
+  },
+
+  iconComplaints: {
+    backgroundColor: "#f8f0e7",
   },
 
   iconPrivacy: {
@@ -978,5 +921,35 @@ const styles = StyleSheet.create({
 
   bottomSpace: {
     height: 25,
+  },
+  /* FOOTER */
+
+  footer: {
+    textAlign: "center",
+    color: footer,
+    fontSize: 14,
+  },
+  logoutButton: {
+    width: "100%",
+    height: 54,
+    borderWidth: 1.5,
+    borderColor: "#D93636",
+    borderRadius: 14,
+    backgroundColor: "#FFF1F1",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    marginBottom: 30,
+  },
+
+  logoutText: {
+    color: "#D93636",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+
+  logoutPressed: {
+    opacity: 0.7,
   },
 });
