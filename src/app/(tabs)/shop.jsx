@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
+
 import {
   Image,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -8,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,41 +21,87 @@ const MUTED = "#829098";
 const BG = "#F3F4F8";
 const WHITE = "#FFFFFF";
 
+/* =====================================================
+   FILTER OPTIONS
+===================================================== */
+
+const categories = [
+  "All Electronics Items",
+  "Charging Cables",
+  "Chargers & Adapters",
+  "Power Banks",
+  "Neckbands",
+];
+
+const brands = [
+  "All Brands",
+  "Apple",
+  "Oppo",
+  "Vivo",
+  "Samsung",
+  "OnePlus",
+  "Realme",
+  "Xiaomi",
+  "boAt",
+  "JBL",
+  "GOVO",
+  "TEMPT",
+];
+
+const priceRanges = [
+  "All Prices",
+  "Under ₹500",
+  "₹500 - ₹1000",
+  "₹1000 - ₹2000",
+  "Above ₹2000",
+];
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
 const products = [
   {
     id: "1",
     brand: "GOVO",
     name: "GOKIXX NACKBAND 651",
+    category: "Neckbands",
     price: 380,
     oldPrice: 456,
     discount: "17% OFF",
     image: require("../../../assets/images/charging-cables.webp"),
     inStock: true,
   },
+
   {
     id: "2",
     brand: "GOVO",
     name: "GOKIXX NACKBAND 620",
+    category: "Neckbands",
     price: 340,
     oldPrice: 408,
     discount: "17% OFF",
     image: require("../../../assets/images/chargers-adapters.webp"),
     inStock: true,
   },
+
   {
     id: "3",
     brand: "TEMPT",
     name: "TEMPT BLITZ 100W C TO C CABLE TS-1098",
+    category: "Charging Cables",
     price: 267,
     oldPrice: 320.4,
     discount: "17% OFF",
     image: require("../../../assets/images/charging-cables.webp"),
     inStock: true,
   },
+
   {
     id: "4",
     brand: "Vivo",
     name: "Vivo 6a type c flash cable",
+    category: "Charging Cables",
     price: 450,
     oldPrice: 599,
     discount: "",
@@ -61,15 +110,138 @@ const products = [
   },
 ];
 
+/* =====================================================
+   SHOP
+===================================================== */
+
 export default function Shop() {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("Newest First");
+
+  /* =====================================================
+     APPLIED FILTERS
+  ===================================================== */
+
   const [stockOnly, setStockOnly] = useState(false);
+  const [discountedOnly, setDiscountedOnly] = useState(false);
+
+  const [selectedCategory, setSelectedCategory] = useState(
+    "All Electronics Items"
+  );
+
+  const [selectedBrand, setSelectedBrand] = useState("All Brands");
+
+  const [selectedPriceRange, setSelectedPriceRange] =
+    useState("All Prices");
+
+  /* =====================================================
+     TEMP FILTERS
+
+     These are used inside the popup.
+     They only become active after pressing Apply Filters.
+  ===================================================== */
+
+  const [tempCategory, setTempCategory] = useState(
+    "All Electronics Items"
+  );
+
+  const [tempBrand, setTempBrand] = useState("All Brands");
+
+  const [tempPriceRange, setTempPriceRange] =
+    useState("All Prices");
+
+  const [tempStockOnly, setTempStockOnly] = useState(false);
+
+  const [tempDiscountedOnly, setTempDiscountedOnly] =
+    useState(false);
+
+  /* =====================================================
+     FILTER MODAL
+  ===================================================== */
+
+  const [filterVisible, setFilterVisible] = useState(false);
+
+  /* =====================================================
+     CHECK WHETHER ANY FILTER IS ACTIVE
+  ===================================================== */
+
+  const hasActiveFilters =
+    stockOnly ||
+    discountedOnly ||
+    selectedCategory !== "All Electronics Items" ||
+    selectedBrand !== "All Brands" ||
+    selectedPriceRange !== "All Prices";
+
+  /* =====================================================
+     OPEN FILTER SHEET
+  ===================================================== */
+
+  const openFilterSheet = () => {
+    /*
+      Copy currently applied filters into temporary state.
+      This allows the user to change options without
+      immediately changing the product list.
+    */
+
+    setTempCategory(selectedCategory);
+    setTempBrand(selectedBrand);
+    setTempPriceRange(selectedPriceRange);
+    setTempStockOnly(stockOnly);
+    setTempDiscountedOnly(discountedOnly);
+
+    setFilterVisible(true);
+  };
+
+  /* =====================================================
+     CLOSE FILTER SHEET
+  ===================================================== */
+
+  const closeFilterSheet = () => {
+    setFilterVisible(false);
+  };
+
+  /* =====================================================
+     APPLY FILTERS
+  ===================================================== */
+
+  const applyFilters = () => {
+    setSelectedCategory(tempCategory);
+    setSelectedBrand(tempBrand);
+    setSelectedPriceRange(tempPriceRange);
+    setStockOnly(tempStockOnly);
+    setDiscountedOnly(tempDiscountedOnly);
+
+    setFilterVisible(false);
+  };
+
+  /* =====================================================
+     RESET FILTERS
+  ===================================================== */
+
+  const resetFilters = () => {
+    setTempCategory("All Electronics Items");
+    setTempBrand("All Brands");
+    setTempPriceRange("All Prices");
+    setTempStockOnly(false);
+    setTempDiscountedOnly(false);
+
+    setSelectedCategory("All Electronics Items");
+    setSelectedBrand("All Brands");
+    setSelectedPriceRange("All Prices");
+    setStockOnly(false);
+    setDiscountedOnly(false);
+  };
+
+  /* =====================================================
+     FILTER PRODUCTS
+  ===================================================== */
 
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    /* SEARCH */
+    /* =================================================
+       SEARCH
+    ================================================= */
 
     if (search.trim()) {
       const value = search.toLowerCase();
@@ -77,17 +249,82 @@ export default function Shop() {
       result = result.filter(
         (product) =>
           product.name.toLowerCase().includes(value) ||
-          product.brand.toLowerCase().includes(value)
+          product.brand.toLowerCase().includes(value) ||
+          product.category.toLowerCase().includes(value)
       );
     }
 
-    /* STOCK FILTER */
+    /* =================================================
+       CATEGORY
+    ================================================= */
+
+    if (selectedCategory !== "All Electronics Items") {
+      result = result.filter(
+        (product) => product.category === selectedCategory
+      );
+    }
+
+    /* =================================================
+       BRAND
+    ================================================= */
+
+    if (selectedBrand !== "All Brands") {
+      result = result.filter(
+        (product) =>
+          product.brand.toLowerCase() ===
+          selectedBrand.toLowerCase()
+      );
+    }
+
+    /* =================================================
+       PRICE RANGE
+    ================================================= */
+
+    if (selectedPriceRange === "Under ₹500") {
+      result = result.filter((product) => product.price < 500);
+    }
+
+    if (selectedPriceRange === "₹500 - ₹1000") {
+      result = result.filter(
+        (product) =>
+          product.price >= 500 &&
+          product.price <= 1000
+      );
+    }
+
+    if (selectedPriceRange === "₹1000 - ₹2000") {
+      result = result.filter(
+        (product) =>
+          product.price > 1000 &&
+          product.price <= 2000
+      );
+    }
+
+    if (selectedPriceRange === "Above ₹2000") {
+      result = result.filter((product) => product.price > 2000);
+    }
+
+    /* =================================================
+       STOCK
+    ================================================= */
 
     if (stockOnly) {
       result = result.filter((product) => product.inStock);
     }
 
-    /* SORT */
+    /* =================================================
+       DISCOUNT
+    ================================================= */
+
+    if (discountedOnly) {
+      result = result.filter(
+        (product) => product.discount
+      );
+    }
+
+    /* =================================================
+       SORT
+    ================================================= */
 
     if (sort === "Price: Low to High") {
       result.sort((a, b) => a.price - b.price);
@@ -98,17 +335,31 @@ export default function Shop() {
     }
 
     if (sort === "Name: A to Z") {
-      result.sort((a, b) => a.name.localeCompare(b.name));
+      result.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
     }
 
     if (sort === "Name: Z to A") {
-      result.sort((a, b) => b.name.localeCompare(a.name));
+      result.sort((a, b) =>
+        b.name.localeCompare(a.name)
+      );
     }
 
     return result;
-  }, [search, sort, stockOnly]);
+  }, [
+    search,
+    sort,
+    stockOnly,
+    discountedOnly,
+    selectedCategory,
+    selectedBrand,
+    selectedPriceRange,
+  ]);
 
-  /* SORT */
+  /* =====================================================
+     SORT
+  ===================================================== */
 
   const changeSort = () => {
     const options = [
@@ -120,15 +371,27 @@ export default function Shop() {
     ];
 
     const currentIndex = options.indexOf(sort);
-    const nextIndex = (currentIndex + 1) % options.length;
+
+    const nextIndex =
+      (currentIndex + 1) % options.length;
 
     setSort(options[nextIndex]);
   };
 
-  /* FILTER BUTTON */
+  /* =====================================================
+     QUICK STOCK FILTER
+  ===================================================== */
 
-  const toggleFilter = () => {
+  const toggleStockQuickFilter = () => {
     setStockOnly((previousValue) => !previousValue);
+  };
+
+  /* =====================================================
+     QUICK DISCOUNT FILTER
+  ===================================================== */
+
+  const toggleDiscountQuickFilter = () => {
+    setDiscountedOnly((previousValue) => !previousValue);
   };
 
   return (
@@ -225,9 +488,10 @@ export default function Shop() {
             <Pressable
               style={[
                 styles.filterIconButton,
-                stockOnly && styles.filterIconButtonActive,
+                hasActiveFilters &&
+                  styles.filterIconButtonActive,
               ]}
-              onPress={toggleFilter}
+              onPress={openFilterSheet}
             >
               <Ionicons
                 name="options-outline"
@@ -270,20 +534,26 @@ export default function Shop() {
             <Pressable
               style={[
                 styles.filterButton,
-                stockOnly && styles.activeFilter,
+                hasActiveFilters &&
+                  styles.activeFilter,
               ]}
-              onPress={toggleFilter}
+              onPress={openFilterSheet}
             >
               <Ionicons
                 name="funnel-outline"
                 size={18}
-                color={stockOnly ? WHITE : PRIMARY}
+                color={
+                  hasActiveFilters
+                    ? WHITE
+                    : PRIMARY
+                }
               />
 
               <Text
                 style={[
                   styles.filterText,
-                  stockOnly && styles.activeFilterText,
+                  hasActiveFilters &&
+                    styles.activeFilterText,
                 ]}
               >
                 Filter
@@ -297,12 +567,13 @@ export default function Shop() {
                 styles.stockButton,
                 stockOnly && styles.activeStock,
               ]}
-              onPress={() => setStockOnly(!stockOnly)}
+              onPress={toggleStockQuickFilter}
             >
               <Text
                 style={[
                   styles.stockText,
-                  stockOnly && styles.activeStockText,
+                  stockOnly &&
+                    styles.activeStockText,
                 ]}
               >
                 In Stock
@@ -311,11 +582,24 @@ export default function Shop() {
 
             {/* ON SALE */}
 
-            <View style={styles.extraFilter}>
-              <Text style={styles.extraFilterText}>
+            <Pressable
+              style={[
+                styles.extraFilter,
+                discountedOnly &&
+                  styles.activeSaleFilter,
+              ]}
+              onPress={toggleDiscountQuickFilter}
+            >
+              <Text
+                style={[
+                  styles.extraFilterText,
+                  discountedOnly &&
+                    styles.activeSaleText,
+                ]}
+              >
                 On Sale
               </Text>
-            </View>
+            </Pressable>
 
           </ScrollView>
 
@@ -330,16 +614,36 @@ export default function Shop() {
           contentContainerStyle={styles.productContainer}
         >
 
-          <View style={styles.grid}>
+          {filteredProducts.length > 0 ? (
+            <View style={styles.grid}>
 
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+
+            </View>
+          ) : (
+            <View style={styles.emptyState}>
+
+              <Ionicons
+                name="search-outline"
+                size={45}
+                color={MUTED}
               />
-            ))}
 
-          </View>
+              <Text style={styles.emptyTitle}>
+                No Products Found
+              </Text>
+
+              <Text style={styles.emptyText}>
+                Try changing your filters or search.
+              </Text>
+
+            </View>
+          )}
 
         </ScrollView>
 
@@ -398,6 +702,447 @@ export default function Shop() {
 
         </View>
 
+        {/* =====================================================
+            FILTER BOTTOM SHEET
+        ===================================================== */}
+
+        <Modal
+          visible={filterVisible}
+          transparent
+          animationType="slide"
+          onRequestClose={closeFilterSheet}
+        >
+
+          <View style={styles.modalOverlay}>
+
+            {/* BACKDROP */}
+
+            <Pressable
+              style={styles.modalBackdrop}
+              onPress={closeFilterSheet}
+            />
+
+            {/* BOTTOM SHEET */}
+
+            <View style={styles.filterSheet}>
+
+              {/* HANDLE */}
+
+              <View style={styles.sheetHandle} />
+
+              {/* HEADER */}
+
+              <View style={styles.sheetHeader}>
+
+                <View>
+                  <Text style={styles.sheetTitle}>
+                    Filter Products
+                  </Text>
+
+                  <Text style={styles.sheetSubtitle}>
+                    Choose your preferences
+                  </Text>
+                </View>
+
+                <Pressable
+                  style={styles.closeButton}
+                  onPress={closeFilterSheet}
+                >
+                  <Ionicons
+                    name="close"
+                    size={24}
+                    color={DARK}
+                  />
+                </Pressable>
+
+              </View>
+
+              {/* FILTER CONTENT */}
+
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={
+                  styles.sheetContent
+                }
+              >
+
+                {/* =================================================
+                    CATEGORIES
+                ================================================= */}
+
+                <View style={styles.filterSection}>
+
+                  <Text style={styles.sectionTitle}>
+                    Categories
+                  </Text>
+
+                  <View style={styles.optionsWrap}>
+
+                    {categories.map((category) => {
+                      const active =
+                        tempCategory === category;
+
+                      return (
+                        <Pressable
+                          key={category}
+                          style={[
+                            styles.optionChip,
+                            active &&
+                              styles.optionChipActive,
+                          ]}
+                          onPress={() =>
+                            setTempCategory(category)
+                          }
+                        >
+
+                          {active && (
+                            <Ionicons
+                              name="checkmark"
+                              size={16}
+                              color={WHITE}
+                            />
+                          )}
+
+                          <Text
+                            style={[
+                              styles.optionText,
+                              active &&
+                                styles.optionTextActive,
+                            ]}
+                          >
+                            {category}
+                          </Text>
+
+                        </Pressable>
+                      );
+                    })}
+
+                  </View>
+
+                </View>
+
+                {/* =================================================
+                    BRANDS
+                ================================================= */}
+
+                <View style={styles.filterSection}>
+
+                  <Text style={styles.sectionTitle}>
+                    Brands
+                  </Text>
+
+                  <View style={styles.optionsWrap}>
+
+                    {brands.map((brand) => {
+                      const active =
+                        tempBrand === brand;
+
+                      return (
+                        <Pressable
+                          key={brand}
+                          style={[
+                            styles.optionChip,
+                            active &&
+                              styles.optionChipActive,
+                          ]}
+                          onPress={() =>
+                            setTempBrand(brand)
+                          }
+                        >
+
+                          {active && (
+                            <Ionicons
+                              name="checkmark"
+                              size={16}
+                              color={WHITE}
+                            />
+                          )}
+
+                          <Text
+                            style={[
+                              styles.optionText,
+                              active &&
+                                styles.optionTextActive,
+                            ]}
+                          >
+                            {brand}
+                          </Text>
+
+                        </Pressable>
+                      );
+                    })}
+
+                  </View>
+
+                </View>
+
+                {/* =================================================
+                    PRICE RANGE
+                ================================================= */}
+
+                <View style={styles.filterSection}>
+
+                  <Text style={styles.sectionTitle}>
+                    Price Range
+                  </Text>
+
+                  <View style={styles.optionsWrap}>
+
+                    {priceRanges.map((range) => {
+                      const active =
+                        tempPriceRange === range;
+
+                      return (
+                        <Pressable
+                          key={range}
+                          style={[
+                            styles.optionChip,
+                            active &&
+                              styles.optionChipActive,
+                          ]}
+                          onPress={() =>
+                            setTempPriceRange(range)
+                          }
+                        >
+
+                          {active && (
+                            <Ionicons
+                              name="checkmark"
+                              size={16}
+                              color={WHITE}
+                            />
+                          )}
+
+                          <Text
+                            style={[
+                              styles.optionText,
+                              active &&
+                                styles.optionTextActive,
+                            ]}
+                          >
+                            {range}
+                          </Text>
+
+                        </Pressable>
+                      );
+                    })}
+
+                  </View>
+
+                </View>
+
+                {/* =================================================
+                    AVAILABILITY
+                ================================================= */}
+
+                <View style={styles.filterSection}>
+
+                  <Text style={styles.sectionTitle}>
+                    Availability
+                  </Text>
+
+                  {/* IN STOCK */}
+
+                  <Pressable
+                    style={[
+                      styles.availabilityOption,
+                      tempStockOnly &&
+                        styles.availabilityOptionActive,
+                    ]}
+                    onPress={() =>
+                      setTempStockOnly(
+                        (previousValue) =>
+                          !previousValue
+                      )
+                    }
+                  >
+
+                    <View
+                      style={
+                        styles.availabilityLeft
+                      }
+                    >
+
+                      <View
+                        style={[
+                          styles.availabilityIcon,
+                          tempStockOnly &&
+                            styles.availabilityIconActive,
+                        ]}
+                      >
+                        <Ionicons
+                          name="cube-outline"
+                          size={20}
+                          color={
+                            tempStockOnly
+                              ? WHITE
+                              : PRIMARY
+                          }
+                        />
+                      </View>
+
+                      <View>
+                        <Text
+                          style={
+                            styles.availabilityTitle
+                          }
+                        >
+                          In Stock Only
+                        </Text>
+
+                        <Text
+                          style={
+                            styles.availabilitySubtitle
+                          }
+                        >
+                          Show products currently available
+                        </Text>
+                      </View>
+
+                    </View>
+
+                    <View
+                      style={[
+                        styles.checkCircle,
+                        tempStockOnly &&
+                          styles.checkCircleActive,
+                      ]}
+                    >
+                      {tempStockOnly && (
+                        <Ionicons
+                          name="checkmark"
+                          size={15}
+                          color={WHITE}
+                        />
+                      )}
+                    </View>
+
+                  </Pressable>
+
+                  {/* DISCOUNTED */}
+
+                  <Pressable
+                    style={[
+                      styles.availabilityOption,
+                      tempDiscountedOnly &&
+                        styles.availabilityOptionActive,
+                    ]}
+                    onPress={() =>
+                      setTempDiscountedOnly(
+                        (previousValue) =>
+                          !previousValue
+                      )
+                    }
+                  >
+
+                    <View
+                      style={
+                        styles.availabilityLeft
+                      }
+                    >
+
+                      <View
+                        style={[
+                          styles.availabilityIcon,
+                          tempDiscountedOnly &&
+                            styles.availabilityIconActive,
+                        ]}
+                      >
+                        <Ionicons
+                          name="pricetag-outline"
+                          size={20}
+                          color={
+                            tempDiscountedOnly
+                              ? WHITE
+                              : PRIMARY
+                          }
+                        />
+                      </View>
+
+                      <View>
+                        <Text
+                          style={
+                            styles.availabilityTitle
+                          }
+                        >
+                          Discounted Only
+                        </Text>
+
+                        <Text
+                          style={
+                            styles.availabilitySubtitle
+                          }
+                        >
+                          Show products currently on sale
+                        </Text>
+                      </View>
+
+                    </View>
+
+                    <View
+                      style={[
+                        styles.checkCircle,
+                        tempDiscountedOnly &&
+                          styles.checkCircleActive,
+                      ]}
+                    >
+                      {tempDiscountedOnly && (
+                        <Ionicons
+                          name="checkmark"
+                          size={15}
+                          color={WHITE}
+                        />
+                      )}
+                    </View>
+
+                  </Pressable>
+
+                </View>
+
+              </ScrollView>
+
+              {/* =================================================
+                  BOTTOM ACTIONS
+              ================================================= */}
+
+              <View style={styles.sheetActions}>
+
+                {/* RESET */}
+
+                <Pressable
+                  style={styles.resetButton}
+                  onPress={resetFilters}
+                >
+                  <Text style={styles.resetText}>
+                    Reset
+                  </Text>
+                </Pressable>
+
+                {/* APPLY */}
+
+                <Pressable
+                  style={styles.applyButton}
+                  onPress={applyFilters}
+                >
+                  <Text style={styles.applyText}>
+                    Apply Filters
+                  </Text>
+
+                  <Ionicons
+                    name="checkmark"
+                    size={20}
+                    color={WHITE}
+                  />
+                </Pressable>
+
+              </View>
+
+            </View>
+
+          </View>
+
+        </Modal>
+
       </View>
     </SafeAreaView>
   );
@@ -430,7 +1175,9 @@ function ProductCard({ product }) {
 
       <Pressable
         style={styles.wishlistButton}
-        onPress={(event) => event.stopPropagation()}
+        onPress={(event) =>
+          event.stopPropagation()
+        }
       >
         <Ionicons
           name="heart-outline"
@@ -496,7 +1243,6 @@ function ProductCard({ product }) {
       {/* ADD / OUT OF STOCK */}
 
       {product.inStock ? (
-
         <Pressable style={styles.addButton}>
 
           <Ionicons
@@ -510,9 +1256,7 @@ function ProductCard({ product }) {
           </Text>
 
         </Pressable>
-
       ) : (
-
         <View style={styles.outOfStock}>
 
           <Text style={styles.outOfStockText}>
@@ -520,7 +1264,6 @@ function ProductCard({ product }) {
           </Text>
 
         </View>
-
       )}
 
     </Pressable>
@@ -667,14 +1410,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  /* NEW: ACTIVE FILTER ICON */
-
   filterIconButtonActive: {
     backgroundColor: "#078F7D",
   },
 
   /* =====================================================
-     FILTERS
+     FILTER CHIPS
   ===================================================== */
 
   filterRow: {
@@ -755,7 +1496,7 @@ const styles = StyleSheet.create({
 
   extraFilter: {
     height: 48,
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     borderRadius: 24,
     backgroundColor: WHITE,
     borderWidth: 1,
@@ -763,9 +1504,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
+  activeSaleFilter: {
+    backgroundColor: "#E3F7F3",
+    borderColor: PRIMARY,
+  },
+
   extraFilterText: {
     fontSize: 14,
     color: DARK,
+  },
+
+  activeSaleText: {
+    color: PRIMARY,
+    fontWeight: "600",
   },
 
   /* =====================================================
@@ -943,6 +1694,31 @@ const styles = StyleSheet.create({
   },
 
   /* =====================================================
+     EMPTY STATE
+  ===================================================== */
+
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 90,
+    paddingHorizontal: 30,
+  },
+
+  emptyTitle: {
+    fontSize: 19,
+    fontWeight: "700",
+    color: DARK,
+    marginTop: 14,
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: MUTED,
+    marginTop: 6,
+    textAlign: "center",
+  },
+
+  /* =====================================================
      CART SUMMARY
   ===================================================== */
 
@@ -1025,4 +1801,253 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
+  /* =====================================================
+     FILTER MODAL
+  ===================================================== */
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+
+  modalBackdrop: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+
+  filterSheet: {
+    height: "75%",
+    backgroundColor: WHITE,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    overflow: "hidden",
+  },
+
+  sheetHandle: {
+    width: 45,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#D5DCDD",
+    alignSelf: "center",
+    marginTop: 10,
+    marginBottom: 3,
+  },
+
+  sheetHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEF0F1",
+  },
+
+  sheetTitle: {
+    fontSize: 21,
+    fontWeight: "700",
+    color: DARK,
+  },
+
+  sheetSubtitle: {
+    fontSize: 13,
+    color: MUTED,
+    marginTop: 3,
+  },
+
+  closeButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: "#F3F5F5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  sheetContent: {
+    paddingHorizontal: 20,
+    paddingTop: 5,
+    paddingBottom: 25,
+  },
+
+  /* =====================================================
+     FILTER SECTIONS
+  ===================================================== */
+
+  filterSection: {
+    paddingTop: 16,
+  },
+
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: DARK,
+    marginBottom: 11,
+  },
+
+  optionsWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 9,
+  },
+
+  optionChip: {
+    minHeight: 42,
+    paddingHorizontal: 14,
+    borderRadius: 21,
+    borderWidth: 1,
+    borderColor: "#E1E6E7",
+    backgroundColor: WHITE,
+
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+  },
+
+  optionChipActive: {
+    backgroundColor: PRIMARY,
+    borderColor: PRIMARY,
+  },
+
+  optionText: {
+    fontSize: 13,
+    color: DARK,
+    fontWeight: "500",
+  },
+
+  optionTextActive: {
+    color: WHITE,
+    fontWeight: "600",
+  },
+
+  /* =====================================================
+     AVAILABILITY
+  ===================================================== */
+
+  availabilityOption: {
+    minHeight: 70,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E4E8EA",
+    backgroundColor: WHITE,
+
+    paddingHorizontal: 13,
+
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+
+    marginBottom: 10,
+  },
+
+  availabilityOptionActive: {
+    borderColor: PRIMARY,
+    backgroundColor: "#F0FBF9",
+  },
+
+  availabilityLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+
+  availabilityIcon: {
+    width: 43,
+    height: 43,
+    borderRadius: 12,
+    backgroundColor: "#E8F8F5",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 11,
+  },
+
+  availabilityIconActive: {
+    backgroundColor: PRIMARY,
+  },
+
+  availabilityTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: DARK,
+  },
+
+  availabilitySubtitle: {
+    fontSize: 12,
+    color: MUTED,
+    marginTop: 3,
+  },
+
+  checkCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#CBD2D5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  checkCircleActive: {
+    backgroundColor: PRIMARY,
+    borderColor: PRIMARY,
+  },
+
+  /* =====================================================
+     SHEET ACTIONS
+  ===================================================== */
+
+  sheetActions: {
+    flexDirection: "row",
+    gap: 10,
+
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 18,
+
+    borderTopWidth: 1,
+    borderTopColor: "#E8ECED",
+    backgroundColor: WHITE,
+  },
+
+  resetButton: {
+    flex: 0.8,
+    height: 52,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#DDE3E5",
+    backgroundColor: WHITE,
+
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  resetText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: DARK,
+  },
+
+  applyButton: {
+    flex: 1.7,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: PRIMARY,
+
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+
+  applyText: {
+    color: WHITE,
+    fontSize: 15,
+    fontWeight: "700",
+  },
 });
