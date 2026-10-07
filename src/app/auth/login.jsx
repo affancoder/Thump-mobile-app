@@ -87,15 +87,6 @@ export default function Login() {
               />
             </View>
 
-            <Pressable
-              onPress={() => router.push("/auth/forgot-password")}
-              style={styles.forgotPassword}
-            >
-              <Text style={styles.forgotPasswordText}>
-                Forgot Password?
-              </Text>
-            </Pressable>
-
             {/* Continue */}
             <Pressable
               style={({ pressed }) => [
@@ -276,16 +267,6 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginTop: 10,
-  },
-
-  forgotPasswordText: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: "600",
-  },
 
   continueButton: {
     height: 56,
