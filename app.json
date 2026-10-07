@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Thump",
+    "name": "",
     "slug": "thump-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#e4ecf3",
+          "backgroundColor": "#08AD92",
           "image": "./assets/images/favicon.png",
           "imageWidth": 56
         }
