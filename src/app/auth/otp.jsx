@@ -8,9 +8,10 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -32,14 +33,34 @@ export default function OTP() {
   const [otp, setOtp] = useState("");
   const [focused, setFocused] = useState(false);
 
+  const scrollViewRef = useRef(null);
+  const otpInputRef = useRef(null);
+
+  const isValidOtp = otp.length === 6;
+
   const handleOtpChange = (value) => {
     const numericValue = value.replace(/[^0-9]/g, "");
 
     setOtp(numericValue.slice(0, 6));
   };
 
+  const handleOtpFocus = () => {
+    setFocused(true);
+
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({
+        y: 180,
+        animated: true,
+      });
+    }, 250);
+  };
+
+  const handleOtpBlur = () => {
+    setFocused(false);
+  };
+
   const handleVerify = () => {
-    if (otp.length < 6) {
+    if (!isValidOtp) {
       return;
     }
 
@@ -56,9 +77,14 @@ export default function OTP() {
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={
+          Platform.OS === "ios"
+            ? "padding"
+            : "height"
+        }
       >
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -66,7 +92,9 @@ export default function OTP() {
           {/* Top Branding Area */}
           <View style={styles.brandArea}>
             <View style={styles.logoWrapper}>
-              <Text style={styles.logo}>THUMP</Text>
+              <Text style={styles.logo}>
+                THUMP
+              </Text>
 
               <Text style={styles.logoTagline}>
                 Beyond Limits
@@ -85,7 +113,8 @@ export default function OTP() {
             </Text>
 
             <Text style={styles.subHeading}>
-              We've sent the 6-digit OTP to {email || "your email"}
+              We've sent the 6-digit OTP to{" "}
+              {email || "your email"}
             </Text>
 
             {/* OTP Input */}
@@ -95,17 +124,18 @@ export default function OTP() {
                 focused && styles.otpWrapperActive,
               ]}
               onPress={() => {
-                setFocused(true);
+                otpInputRef.current?.focus();
               }}
             >
               {/* Actual TextInput */}
               <TextInput
+                ref={otpInputRef}
                 value={otp}
                 onChangeText={handleOtpChange}
                 keyboardType="number-pad"
                 maxLength={6}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
+                onFocus={handleOtpFocus}
+                onBlur={handleOtpBlur}
                 style={styles.hiddenInput}
               />
 
@@ -131,6 +161,8 @@ export default function OTP() {
             <Pressable
               style={({ pressed }) => [
                 styles.verifyButton,
+                isValidOtp &&
+                  styles.verifyButtonActive,
                 pressed && styles.pressed,
               ]}
               onPress={handleVerify}
@@ -158,7 +190,6 @@ export default function OTP() {
                 </Text>
               </Pressable>
             </View>
-
           </View>
 
           {/* Footer */}
@@ -189,11 +220,16 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
   },
 
+  /* BRANDING */
+
   brandArea: {
     backgroundColor: COLORS.primary,
     minHeight: 430,
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? 55 : 35,
+    paddingTop:
+      Platform.OS === "android"
+        ? 55
+        : 35,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 58,
     borderBottomRightRadius: 58,
@@ -230,6 +266,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
 
+  /* CARD */
+
   card: {
     backgroundColor: COLORS.white,
     marginHorizontal: 20,
@@ -262,25 +300,26 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  /*
-   * One long OTP container
-   */
+  /* OTP */
+
   otpWrapper: {
     height: 64,
     width: "100%",
     borderWidth: 0,
     borderColor: COLORS.border,
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
+
     gap: 4,
     position: "relative",
   },
 
-  /*
-   * Actual input receives keyboard input.
-   * It is visually hidden.
-   */
+  otpWrapperActive: {
+    borderRadius: 14,
+  },
+
   hiddenInput: {
     position: "absolute",
     width: "100%",
@@ -289,9 +328,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
 
-  /*
-   * Visual OTP slots
-   */
   otpBox: {
     width: 43,
     height: 52,
@@ -314,14 +350,19 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
 
+  /* VERIFY BUTTON */
+
   verifyButton: {
     height: 56,
     borderRadius: 14,
     backgroundColor: COLORS.secondaryText,
+
     marginTop: 24,
+
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+
     gap: 12,
 
     shadowColor: COLORS.primary,
@@ -334,11 +375,17 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
+  verifyButtonActive: {
+    backgroundColor: "#079C87",
+  },
+
   verifyText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "700",
   },
+
+  /* RESEND */
 
   resendContainer: {
     flexDirection: "row",
@@ -358,6 +405,8 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     marginLeft: 6,
   },
+
+  /* FOOTER */
 
   footer: {
     textAlign: "center",

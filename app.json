@@ -21,7 +21,7 @@
         {
           "backgroundColor": "#e4ecf3",
           "image": "./assets/images/favicon.png",
-          "imageWidth": 86
+          "imageWidth": 56
         }
       ],
       "expo-font"

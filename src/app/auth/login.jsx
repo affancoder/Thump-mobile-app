@@ -8,10 +8,10 @@ import {
   TextInput,
   View,
 } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
-
+import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const COLORS = {
@@ -20,31 +20,75 @@ const COLORS = {
   background: "#F3F4F8",
   white: "#FFFFFF",
   text: "#182126",
-  secondaryText: "#66757d",
+  secondaryText: "#66757D",
   inputBackground: "#EEF9F7",
   border: "#08AA92",
   footer: "#829098",
 };
 
 export default function Login() {
+  const [email, setEmail] = useState("");
   const [focused, setFocused] = useState(false);
+
+  const scrollViewRef = useRef(null);
+  const emailInputRef = useRef(null);
+
+  const isValidEmail =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleContinue = () => {
+    if (!isValidEmail) {
+      return;
+    }
+
+    router.push({
+      pathname: "/auth/otp",
+      params: {
+        email,
+      },
+    });
+  };
+
+  const handleEmailFocus = () => {
+    setFocused(true);
+
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({
+        y: 180,
+        animated: true,
+      });
+    }, 250);
+  };
+
+  const handleEmailBlur = () => {
+    setFocused(false);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={
+          Platform.OS === "ios" ? "padding" : "height"
+        }
       >
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={styles.container}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Top Branding Area */}
+          {/* BRANDING */}
+
           <View style={styles.brandArea}>
             <View style={styles.logoWrapper}>
-              <Text style={styles.logo}>THUMP</Text>
-              <Text style={styles.logoTagline}>Beyond Limits</Text>
+              <Text style={styles.logo}>
+                THUMP
+              </Text>
+
+              <Text style={styles.logoTagline}>
+                Beyond Limits
+              </Text>
             </View>
 
             <Text style={styles.brandDescription}>
@@ -52,17 +96,25 @@ export default function Login() {
             </Text>
           </View>
 
-          {/* Login Card */}
-          <View style={styles.card}>
-            <Text style={styles.heading}>Welcome Back</Text>
+          {/* LOGIN CARD */}
 
-            <Text style={styles.subHeading}>
-              Sign in to continue to your account
+          <View style={styles.card}>
+            <Text style={styles.heading}>
+              Welcome Back
             </Text>
 
-            <Text style={styles.label}>Email Address</Text>
+            <Text style={styles.subHeading}>
+              Sign in with your email to continue
+            </Text>
 
-            {/* Email Input */}
+            {/* EMAIL LABEL */}
+
+            <Text style={styles.label}>
+              Email Address
+            </Text>
+
+            {/* EMAIL INPUT */}
+
             <View
               style={[
                 styles.inputWrapper,
@@ -76,72 +128,61 @@ export default function Login() {
               />
 
               <TextInput
+                ref={emailInputRef}
                 style={styles.input}
                 placeholder="Enter your email"
                 placeholderTextColor="#87949A"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
+                value={email}
+                onChangeText={setEmail}
+                onFocus={handleEmailFocus}
+                onBlur={handleEmailBlur}
               />
             </View>
 
-            {/* Continue */}
+            {/* CONTINUE BUTTON */}
+
             <Pressable
               style={({ pressed }) => [
                 styles.continueButton,
+                isValidEmail &&
+                  styles.continueButtonActive,
                 pressed && styles.pressed,
               ]}
-              onPress={() => {
-                // Frontend only for now
-                router.push("/auth/otp");
-              }}
+              onPress={handleContinue}
             >
-              <Text style={styles.continueText}>Continue</Text>
+              <Text style={styles.continueText}>
+                Continue
+              </Text>
 
               <Ionicons
                 name="arrow-forward"
-                size={24}
+                size={23}
                 color={COLORS.white}
               />
             </Pressable>
 
-            {/* OR */}
-            <View style={styles.orContainer}>
-              <View style={styles.divider} />
+            {/* TERMS */}
 
-              <Text style={styles.orText}>or</Text>
-
-              <View style={styles.divider} />
-            </View>
-
-            {/* Google */}
-            <Pressable
-              style={({ pressed }) => [
-                styles.googleButton,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.googleIcon}>G</Text>
-
-              <Text style={styles.googleText}>
-                Continue with Google
-              </Text>
-            </Pressable>
-
-            {/* Terms */}
             <Text style={styles.terms}>
               By continuing, you agree to our{" "}
-              <Text style={styles.termsLink}>Terms</Text>
-              {" & "}
-              <Text style={styles.termsLink}>Privacy Policy</Text>
-
-              <View>
-                <Text style={styles.footer}>
-                Thump Beyond Limits ©2026
+              <Text style={styles.termsLink}>
+                Terms
               </Text>
-              </View>
+              {" & "}
+              <Text style={styles.termsLink}>
+                Privacy Policy
+              </Text>
+            </Text>
+          </View>
+
+          {/* FOOTER */}
+
+          <View>
+            <Text style={styles.footer}>
+              Thump Beyond Limits ©2026
             </Text>
           </View>
         </ScrollView>
@@ -163,14 +204,17 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: COLORS.background,
-    paddingBottom: 20,
+    paddingBottom: 28,
   },
+
+  /* BRANDING */
 
   brandArea: {
     backgroundColor: COLORS.primary,
     minHeight: 430,
     alignItems: "center",
-    paddingTop: Platform.OS === "android" ? 55 : 35,
+    paddingTop:
+      Platform.OS === "android" ? 55 : 35,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 58,
     borderBottomRightRadius: 58,
@@ -199,20 +243,24 @@ const styles = StyleSheet.create({
   brandDescription: {
     color: COLORS.white,
     fontSize: 19,
-    fontWeight: "800",
+    fontFamily: "Black Ops One",
+    fontWeight: "400",
+    fontStyle: "normal",
     textAlign: "center",
     marginTop: 28,
     letterSpacing: 0.2,
   },
 
+  /* CARD */
+
   card: {
     backgroundColor: COLORS.white,
     marginHorizontal: 20,
-    marginTop: -180,
+    marginTop: -160,
     borderRadius: 32,
     paddingHorizontal: 22,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 24,
+    paddingBottom: 34,
 
     shadowColor: "#000",
     shadowOffset: {
@@ -233,8 +281,11 @@ const styles = StyleSheet.create({
   subHeading: {
     fontSize: 16,
     color: COLORS.secondaryText,
-    lineHeight: 29,
+    lineHeight: 25,
+    marginTop: 4,
   },
+
+  /* EMAIL */
 
   label: {
     fontSize: 16,
@@ -247,13 +298,15 @@ const styles = StyleSheet.create({
   inputWrapper: {
     height: 56,
     width: "100%",
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: COLORS.border,
     borderRadius: 14,
     backgroundColor: COLORS.inputBackground,
+
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 18,
+
+    paddingHorizontal: 16,
   },
 
   inputWrapperActive: {
@@ -263,21 +316,27 @@ const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    marginLeft: 5,
+    height: "100%",
+    marginLeft: 12,
+
     fontSize: 16,
     color: COLORS.text,
   },
 
+  /* CONTINUE */
 
   continueButton: {
     height: 56,
     borderRadius: 14,
     backgroundColor: COLORS.secondaryText,
+
     marginTop: 24,
+
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 12,
+
+    gap: 10,
 
     shadowColor: COLORS.primary,
     shadowOffset: {
@@ -289,66 +348,23 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
+  continueButtonActive: {
+    backgroundColor: "#079C87",
+  },
+
   continueText: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "700",
   },
 
-  orContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-  },
+  /* TERMS */
 
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "#E0E2E4",
-  },
-
-  orText: {
-    marginHorizontal: 16,
-    fontSize: 18,
-    color: "#829098",
-  },
-
-  googleButton: {
-    height: 56,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#E2E2E2",
-    backgroundColor: COLORS.white,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-
-  googleIcon: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#4285F4",
-  },
-
-  googleText: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: COLORS.text,
-  },
   terms: {
     textAlign: "center",
     fontSize: 12,
-    color: "#829098",
+    lineHeight: 23,
+    color: COLORS.footer,
     marginTop: 27,
   },
 
@@ -357,10 +373,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
+  /* FOOTER */
+
   footer: {
     textAlign: "center",
     color: COLORS.footer,
-    fontSize: 12,
+    fontSize: 14,
+    marginTop: 20,
   },
 
   pressed: {
