@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import Screen from "../../components/Screen"; 
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -67,7 +68,8 @@ export default function Login() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+     <Screen background={COLORS.background} statusBar="light">
+  <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={
@@ -190,13 +192,14 @@ export default function Login() {
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.text,
+    backgroundColor: COLORS.primary,
   },
 
   flex: {
