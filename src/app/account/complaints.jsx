@@ -101,7 +101,7 @@ export default function Complaints() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BG,
+    backgroundColor: "#08AA92",
   },
 
   /* ================= HEADER ================= */

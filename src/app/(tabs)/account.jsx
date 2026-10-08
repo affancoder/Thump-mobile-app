@@ -443,7 +443,7 @@ function SubMenuRow({ icon, iconType, title, subtitle }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BACKGROUND,
+    backgroundColor: "#08AA92",
   },
 
   container: {

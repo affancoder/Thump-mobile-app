@@ -466,7 +466,7 @@ function FieldLabel({ text, required }) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#08AA92",
+    backgroundColor: BG,
   },
 
   keyboardView: {

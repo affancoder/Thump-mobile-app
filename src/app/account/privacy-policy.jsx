@@ -217,9 +217,9 @@ function PrivacySection({
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: BG,
+    backgroundColor: "#08AA92",
   },
-
+  
   /* ================= HEADER ================= */
 
   header: {
