@@ -135,6 +135,12 @@ export default function TabsLayout() {
 }
 
 const styles = StyleSheet.create({
+  
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#08AA92",
+  },
+  
   tabBarContainer: {
     backgroundColor: WHITE,
   },

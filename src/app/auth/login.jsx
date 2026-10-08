@@ -1,3 +1,4 @@
+import React, { useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -7,15 +8,12 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import Screen from "../../components/Screen"; 
 import { router } from "expo-router";
-import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { Link } from "@expo/ui/swift-ui";
 
 const COLORS = {
   primary: "#08AA92",
@@ -30,25 +28,22 @@ const COLORS = {
 };
 
 export default function Login() {
+  const { width } = useWindowDimensions();
+
   const [email, setEmail] = useState("");
   const [focused, setFocused] = useState(false);
 
   const scrollViewRef = useRef(null);
-  const emailInputRef = useRef(null);
 
   const isValidEmail =
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleContinue = () => {
-    if (!isValidEmail) {
-      return;
-    }
+    if (!isValidEmail) return;
 
     router.push({
       pathname: "/auth/otp",
-      params: {
-        email,
-      },
+      params: { email },
     });
   };
 
@@ -57,10 +52,10 @@ export default function Login() {
 
     setTimeout(() => {
       scrollViewRef.current?.scrollTo({
-        y: 180,
+        y: 150,
         animated: true,
       });
-    }, 250);
+    }, 300);
   };
 
   const handleEmailBlur = () => {
@@ -68,205 +63,266 @@ export default function Login() {
   };
 
   return (
-     <Screen background={COLORS.background} statusBar="light">
-  <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={
-          Platform.OS === "ios" ? "padding" : "height"
-        }
+    <View style={styles.screen}>
+      <SafeAreaView
+        style={styles.safeArea}
+        edges={["top", "bottom"]}
       >
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerStyle={styles.container}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+        <KeyboardAvoidingView
+          style={styles.keyboard}
+          behavior={
+            Platform.OS === "ios"
+              ? "padding"
+              : undefined
+          }
         >
-          {/* BRANDING */}
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* =========================
+                GREEN HEADER
+            ========================== */}
 
-          <View style={styles.brandArea}>
-            <View style={styles.logoWrapper}>
-              <Text style={styles.logo}>
-                THUMP
-              </Text>
+            <View style={styles.header}>
+              <View style={styles.logoContainer}>
+                <Text
+                  style={[
+                    styles.logo,
+                    {
+                      fontSize: width < 360 ? 60 : 72,
+                    },
+                  ]}
+                >
+                  THUMP
+                </Text>
 
-              <Text style={styles.logoTagline}>
-                Beyond Limits
+                <Text
+                  style={[
+                    styles.logoTagline,
+                    {
+                      fontSize: width < 360 ? 17 : 19,
+                    },
+                  ]}
+                >
+                  Beyond Limits
+                </Text>
+              </View>
+
+              <Text style={styles.description}>
+                Electronic Accessories In Your Way.
               </Text>
             </View>
 
-            <Text style={styles.brandDescription}>
-              Electronic Accessories In Your Way.
-            </Text>
-          </View>
+            {/* =========================
+                LOGIN CARD
+            ========================== */}
 
-          {/* LOGIN CARD */}
+            <View style={styles.card}>
+              <Text style={styles.heading}>
+                Welcome Back
+              </Text>
 
-          <View style={styles.card}>
-            <Text style={styles.heading}>
-              Welcome Back
-            </Text>
+              <Text style={styles.subHeading}>
+                Sign in with your email to continue
+              </Text>
 
-            <Text style={styles.subHeading}>
-              Sign in with your email to continue
-            </Text>
+              <Text style={styles.label}>
+                Email Address
+              </Text>
 
-            {/* EMAIL LABEL */}
+              {/* EMAIL INPUT */}
 
-            <Text style={styles.label}>
-              Email Address
-            </Text>
+              <View
+                style={[
+                  styles.inputContainer,
+                  focused && styles.inputContainerFocused,
+                ]}
+              >
+                <Ionicons
+                  name="mail-outline"
+                  size={22}
+                  color={COLORS.primary}
+                />
 
-            {/* EMAIL INPUT */}
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Enter your email"
+                  placeholderTextColor="#87949A"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  onFocus={handleEmailFocus}
+                  onBlur={handleEmailBlur}
+                  returnKeyType="done"
+                />
+              </View>
 
-            <View
-              style={[
-                styles.inputWrapper,
-                focused && styles.inputWrapperActive,
-              ]}
-            >
-              <Ionicons
-                name="mail-outline"
-                size={23}
-                color={COLORS.primary}
-              />
+              {/* CONTINUE BUTTON */}
 
-              <TextInput
-                ref={emailInputRef}
-                style={styles.input}
-                placeholder="Enter your email"
-                placeholderTextColor="#87949A"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={email}
-                onChangeText={setEmail}
-                onFocus={handleEmailFocus}
-                onBlur={handleEmailBlur}
-              />
+              <Pressable
+                onPress={handleContinue}
+                style={({ pressed }) => [
+                  styles.button,
+
+                  isValidEmail
+                    ? styles.buttonActive
+                    : styles.buttonDisabled,
+
+                  pressed && styles.buttonPressed,
+                ]}
+              >
+                <Text style={styles.buttonText}>
+                  Continue
+                </Text>
+
+                <Ionicons
+                  name="arrow-forward"
+                  size={22}
+                  color={COLORS.white}
+                />
+              </Pressable>
+
+              {/* TERMS */}
+
+              <Text style={styles.terms}>
+                By continuing, you agree to our{" "}
+                <Text style={styles.termsLink}>
+                  Terms
+                </Text>
+                {" & "}
+                <Text style={styles.termsLink}>
+                  Privacy Policy
+                </Text>
+              </Text>
             </View>
 
-            {/* CONTINUE BUTTON */}
+            {/* =========================
+                FOOTER
+            ========================== */}
 
-            <Pressable
-              style={({ pressed }) => [
-                styles.continueButton,
-                isValidEmail &&
-                  styles.continueButtonActive,
-                pressed && styles.pressed,
-              ]}
-              onPress={handleContinue}
-            >
-              <Text style={styles.continueText}>
-                Continue
+            <View style={styles.footerContainer}>
+              <Text style={styles.footer}>
+                Thump Beyond Limits ©2026
               </Text>
-
-              <Ionicons
-                name="arrow-forward"
-                size={23}
-                color={COLORS.white}
-              />
-            </Pressable>
-
-            {/* TERMS */}
-
-            <Text style={styles.terms}>
-              By continuing, you agree to our{" "}
-              <Text style={styles.termsLink}>
-                Terms
-              </Text>
-              {" & "}
-              <Text style={styles.termsLink}>
-                Privacy Policy
-              </Text>
-            </Text>
-          </View>
-
-          {/* FOOTER */}
-
-          <View>
-            <Text style={styles.footer}>
-              Thump Beyond Limits ©2026
-            </Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-    </Screen>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // =========================
+  // SCREEN
+  // =========================
+
+  screen: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+  },
+
   safeArea: {
     flex: 1,
     backgroundColor: COLORS.primary,
   },
 
-  flex: {
+  keyboard: {
     flex: 1,
   },
 
-  container: {
-    flexGrow: 1,
+  scroll: {
+    flex: 1,
     backgroundColor: COLORS.background,
-    paddingBottom: 20,
   },
 
-  /* BRANDING */
+  content: {
+    flexGrow: 1,
+    paddingBottom: 30,
+  },
 
-  brandArea: {
+  // =========================
+  // HEADER
+  // =========================
+
+  header: {
+    width: "100%",
+
     backgroundColor: COLORS.primary,
-    minHeight: 430,
+
     alignItems: "center",
-    paddingTop:
-      Platform.OS === "android" ? 55 : 35,
+
+    paddingTop: 45,
+    paddingBottom: 145,
+
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 58,
-    borderBottomRightRadius: 58,
+
+    borderBottomLeftRadius: 55,
+    borderBottomRightRadius: 55,
   },
 
-  logoWrapper: {
+  logoContainer: {
     alignItems: "center",
   },
 
   logo: {
-    fontSize: 74,
-    lineHeight: 78,
-    fontWeight: "900",
-    letterSpacing: -3,
     color: "#000000",
+
+    fontWeight: "900",
+
+    letterSpacing: -3,
+
+    lineHeight: 76,
   },
 
   logoTagline: {
-    fontSize: 19,
-    lineHeight: 34,
-    fontWeight: "500",
     color: "#000000",
-    marginTop: -10,
+
+    fontWeight: "500",
+
+    marginTop: -8,
   },
 
-  brandDescription: {
+  description: {
     color: COLORS.white,
-    fontSize: 19,
-    fontFamily: "Black Ops One",
-    fontWeight: "400",
-    fontStyle: "normal",
+
+    fontSize: 18,
+
+    fontWeight: "500",
+
     textAlign: "center",
+
     marginTop: 28,
-    letterSpacing: 0.2,
+
+    maxWidth: 320,
   },
 
-  /* CARD */
+  // =========================
+  // CARD
+  // =========================
 
   card: {
     backgroundColor: COLORS.white,
-    marginHorizontal: 20,
-    marginTop: -160,
-    borderRadius: 32,
-    paddingHorizontal: 22,
-    paddingTop: 24,
-    paddingBottom: 34,
 
+    marginHorizontal: 20,
+
+    marginTop: -110,
+
+    borderRadius: 30,
+
+    paddingHorizontal: 22,
+
+    paddingTop: 25,
+
+    paddingBottom: 32,
+
+    // iOS
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -274,120 +330,172 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 5,
+
+    // Android
+    elevation: 6,
   },
 
   heading: {
     fontSize: 26,
+
     fontWeight: "700",
+
     color: COLORS.text,
   },
 
   subHeading: {
     fontSize: 16,
+
     color: COLORS.secondaryText,
-    lineHeight: 25,
-    marginTop: 4,
+
+    marginTop: 5,
+
+    lineHeight: 24,
   },
 
-  /* EMAIL */
+  // =========================
+  // LABEL
+  // =========================
 
   label: {
     fontSize: 16,
+
     fontWeight: "600",
+
     color: COLORS.secondaryText,
+
     marginTop: 22,
+
     marginBottom: 12,
   },
 
-  inputWrapper: {
+  // =========================
+  // INPUT
+  // =========================
+
+  inputContainer: {
     height: 56,
+
     width: "100%",
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    borderRadius: 14,
-    backgroundColor: COLORS.inputBackground,
 
     flexDirection: "row",
+
     alignItems: "center",
+
+    borderWidth: 1.5,
+
+    borderColor: COLORS.border,
+
+    borderRadius: 14,
+
+    backgroundColor: COLORS.inputBackground,
 
     paddingHorizontal: 16,
   },
 
-  inputWrapperActive: {
+  inputContainerFocused: {
     backgroundColor: "#E0F5F1",
+
     borderColor: COLORS.primaryDark,
   },
 
   input: {
     flex: 1,
-    height: "100%",
+
+    height: 56,
+
     marginLeft: 12,
 
     fontSize: 16,
+
     color: COLORS.text,
+
+    paddingVertical: 0,
   },
 
-  /* CONTINUE */
+  // =========================
+  // BUTTON
+  // =========================
 
-  continueButton: {
+  button: {
     height: 56,
-    borderRadius: 14,
-    backgroundColor: COLORS.secondaryText,
 
     marginTop: 24,
 
+    borderRadius: 14,
+
     flexDirection: "row",
-    justifyContent: "center",
+
     alignItems: "center",
 
+    justifyContent: "center",
+
     gap: 10,
-
-    shadowColor: COLORS.primary,
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    elevation: 5,
   },
 
-  continueButtonActive: {
-    backgroundColor: "#079C87",
+  buttonActive: {
+    backgroundColor: COLORS.primaryDark,
   },
 
-  continueText: {
+  buttonDisabled: {
+    backgroundColor: COLORS.secondaryText,
+  },
+
+  buttonPressed: {
+    opacity: 0.7,
+  },
+
+  buttonText: {
     color: COLORS.white,
+
     fontSize: 18,
+
     fontWeight: "700",
   },
 
-  /* TERMS */
+  // =========================
+  // TERMS
+  // =========================
 
   terms: {
     textAlign: "center",
-    fontSize: 12,
-    lineHeight: 23,
+
     color: COLORS.footer,
-    marginTop: 27,
+
+    fontSize: 12,
+
+    lineHeight: 22,
+
+    marginTop: 25,
+
+    paddingHorizontal: 5,
   },
 
   termsLink: {
     color: COLORS.primary,
+
     fontWeight: "700",
   },
 
-  /* FOOTER */
+  // =========================
+  // FOOTER
+  // =========================
 
-  footer: {
-    textAlign: "center",
-    color: COLORS.footer,
-    fontSize: 14,
-    marginTop: 20,
+  footerContainer: {
+    alignItems: "center",
+
+    paddingHorizontal: 20,
+
+    paddingTop: 20,
+
+    paddingBottom: 10,
   },
 
-  pressed: {
-    opacity: 0.75,
+  footer: {
+    color: COLORS.footer,
+
+    fontSize: 14,
+
+    textAlign: "center",
   },
 });
