@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: PRIMARY,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 10,
     paddingBottom: 10,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
 
   avatarText: {
     color: WHITE,
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: "500",
   },
 
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   /* ================= CONTENT ================= */
 
   content: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 12,
     paddingTop: 23,
   },
 
