@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "@expo/ui/swift-ui";
 
 const COLORS = {
   primary: "#08AA92",

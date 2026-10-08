@@ -23,10 +23,10 @@ export default function PrivacyPolicy() {
   const router = useRouter();
 
   const [openSections, setOpenSections] = useState({
-    information: true,
-    usage: true,
-    rights: true,
-    contact: true,
+    information: false,
+    usage: false,
+    rights: false,
+    contact: false,
   });
 
   const toggleSection = (section) => {
@@ -77,11 +77,7 @@ export default function PrivacyPolicy() {
           </Text>
 
           <Text style={styles.introText}>
-            We collect minimal data needed to serve you better.
-          </Text>
-
-          <Text style={styles.introText}>
-            Your information is encrypted, never sold, and you
+            We collect minimal data needed to serve you better.Your information is encrypted, never sold, and you
             control it.
           </Text>
         </View>
@@ -227,7 +223,7 @@ const styles = StyleSheet.create({
   /* ================= HEADER ================= */
 
   header: {
-    height: 72,
+    height: 70,
 
     backgroundColor: TEAL,
 
@@ -280,8 +276,8 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE,
 
     borderRadius: 17,
-    paddingTop: 32,
-    paddingBottom: 28,
+    paddingTop: 22,
+    paddingBottom: 22,
 
     marginBottom: 20,
 
@@ -323,7 +319,7 @@ const styles = StyleSheet.create({
 
     fontSize: 13,
 
-    lineHeight: 15,
+    lineHeight: 18,
 
     textAlign: "center",
 
@@ -355,7 +351,7 @@ const styles = StyleSheet.create({
   },
 
   sectionHeader: {
-    minHeight: 67,
+    minHeight: 56,
 
     flexDirection: "row",
     alignItems: "center",
@@ -382,7 +378,7 @@ const styles = StyleSheet.create({
 
     color: TEXT,
 
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "700",
   },
 
@@ -403,17 +399,15 @@ const styles = StyleSheet.create({
   description: {
     color: MUTED,
 
-    fontSize: 15,
-
-    lineHeight: 24,
+    fontSize: 13,
   },
 
   /* ================= AGREEMENT ================= */
 
   agreementCard: {
-    minHeight: 57,
+    minHeight: 46,
 
-    borderRadius: 14,
+    borderRadius: 16,
 
     backgroundColor: WHITE,
 
