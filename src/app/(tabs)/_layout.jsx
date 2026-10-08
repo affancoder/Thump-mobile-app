@@ -140,19 +140,18 @@ const styles = StyleSheet.create({
   },
 
   tabBar: {
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
 
     paddingHorizontal: 18,
     paddingVertical: 8,
+
     backgroundColor: WHITE,
   },
 
   tab: {
     flex: 1,
-
     alignItems: "center",
     justifyContent: "center",
   },
@@ -177,5 +176,6 @@ const styles = StyleSheet.create({
   tabLabel: {
     fontSize: 12,
     fontWeight: "600",
+    marginTop: 2,
   },
 });
