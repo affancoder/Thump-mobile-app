@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   /* ================= CONTENT ================= */
 
   content: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingTop: 23,
   },
 
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
 
   categoryCard: {
     width: "100%",
-    height: 225,
+    height: 180,
     borderRadius: 18,
     overflow: "hidden",
     backgroundColor: "#DDDDDD",
