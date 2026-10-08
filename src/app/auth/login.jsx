@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Link } from "@expo/ui/swift-ui";
 
 const COLORS = {
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: COLORS.background,
-    paddingBottom: 28,
+    paddingBottom: 20,
   },
 
   /* BRANDING */
